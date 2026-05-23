@@ -1,5 +1,6 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class House : MonoBehaviour
 {
@@ -8,9 +9,6 @@ public class House : MonoBehaviour
     
     [SerializeField]
     private float hideTime;
-
-    [SerializeField]
-    private List<HouseConnection> connections;
 
     private float currentHideTimer;
     private float spriteTransparencyDelta;
@@ -21,6 +19,9 @@ public class House : MonoBehaviour
 
     [SerializeField]
     private float chanceOfBeingSpotted;
+    
+    public event Action OnChargeRequested = delegate { };
+    public event Action OnDeactivated = delegate { };
 
     
     private void FixedUpdate()
@@ -34,7 +35,7 @@ public class House : MonoBehaviour
         if (other.gameObject.name.Equals("Trigger"))
             if (!charged)
             {
-                TryToStartCharging();
+                OnChargeRequested.Invoke();
             }
             else
             {
@@ -72,14 +73,6 @@ public class House : MonoBehaviour
         }
     }
 
-    private void TryToStartCharging()
-    {
-        foreach (var connection in connections)
-        {
-            connection.TryToActivate();
-        }
-    }
-
     private void ChangeHiddenStatus()
     {
         if (hidingStatusChangeStarted) return;
@@ -89,7 +82,7 @@ public class House : MonoBehaviour
     }
 
     public void Charge()
-    {//todo: make either this or corresponding method in Connection to be called via events 
+    {
         if (!charged)
         {
             sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 1f);
@@ -99,15 +92,12 @@ public class House : MonoBehaviour
 
     private void Deactivate()
     {
-        foreach (var connection in connections)
-            connection.Deactivate();
+        OnDeactivated.Invoke();
         hidden = false;
         currentHideTimer = 0f;
         hidingStatusChangeStarted = false;
         sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 0f);
         charged = false;
     }
-
-    public bool isCharged => charged;
     public bool isActive => !hidden && charged;
 }

@@ -71,6 +71,7 @@ public class Electrician : MonoBehaviour
 
     public void CallElectrician(Vector3 newAddress)
     {
+        if (addresses.Contains(newAddress)) return;
         addresses.Add(newAddress);
         atHome = false;
     }

@@ -16,6 +16,22 @@ public class HouseConnection : MonoBehaviour
     
     private bool activationStarted;
 
+    private void Awake()
+    {
+        house1.OnChargeRequested += TryToActivate;
+        house1.OnDeactivated += Deactivate;
+        house2.OnChargeRequested += TryToActivate;
+        house2.OnDeactivated += Deactivate;
+    }
+
+    private void OnDestroy()
+    {
+        house1.OnChargeRequested -= TryToActivate;
+        house1.OnDeactivated -= Deactivate;
+        house2.OnChargeRequested -= TryToActivate;
+        house2.OnDeactivated -= Deactivate;
+    }
+
     private void FixedUpdate()
     {
         if (activationStarted)
@@ -36,7 +52,7 @@ public class HouseConnection : MonoBehaviour
         }
     }
 
-    public void TryToActivate()
+    private void TryToActivate()
     {
         if (house1.isActive || house2.isActive)
             Activate();
@@ -49,7 +65,7 @@ public class HouseConnection : MonoBehaviour
         activationStarted = true;
     }
 
-    public void Deactivate()
+    private void Deactivate()
     {
         activationStarted = false;
         currentActivationTimer = 0f;
