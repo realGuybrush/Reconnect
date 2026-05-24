@@ -12,6 +12,9 @@ public class HouseWithConnections
 public class WorldManager : MonoBehaviour
 {
     [SerializeField]
+    private MenuManager menu;
+    
+    [SerializeField]
     private GameObject lastWire;
     
     [SerializeField]
@@ -43,7 +46,7 @@ public class WorldManager : MonoBehaviour
         {
             checkedHouses.Clear();
             lastWire.SetActive(true);
-            Debug.Log("You Win!");//todo: add actual winning
+            menu.EndGame(true);
         }
     }
     
@@ -59,7 +62,7 @@ public class WorldManager : MonoBehaviour
             }
         }
         if(!notLoss)
-            Debug.Log("You Lost!");//todo: add actual losing
+            menu.EndGame(false);
     }
 
     private bool CheckHouseConnections(int houseIndex)

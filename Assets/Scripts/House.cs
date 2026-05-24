@@ -48,6 +48,12 @@ public class House : MonoBehaviour
                 Deactivate();
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.gameObject.name.Equals("Electrician") && !hidden)
+            Deactivate();
+    }
+
     private void TryToGetSpotted()
     {
         if(isActive)

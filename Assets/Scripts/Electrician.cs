@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -41,15 +42,22 @@ public class Electrician : MonoBehaviour
             if (body.linearVelocity.magnitude <= 0 || (int)Time.time % 2 == 0)
             {
                 body.linearVelocity = (addresses[0] - transform.position).normalized * speed;
-                trigger.SetActive(false);
             }
         }
         else
         {
-            trigger.SetActive(true);
+            Debug.Log("fix");
+            StartCoroutine("FixHouse");
             body.linearVelocity = Vector2.zero;
             addresses.RemoveAt(0);
         }
+    }
+
+    private IEnumerator FixHouse()
+    {
+        trigger.SetActive(true);
+        yield return new WaitForSeconds(1f);
+        trigger.SetActive(false);
     }
 
     private void GoHome()

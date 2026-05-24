@@ -35,12 +35,14 @@ public class CursorController : MonoBehaviour
 
     private void LMBPressed(InputAction.CallbackContext callbackContext)
     {
-        trigger.SetActive(true);
+        if(trigger != null)
+            trigger.SetActive(true);
     }
 
     private void LMBReleased(InputAction.CallbackContext callbackContext)
     {
-        trigger.SetActive(false);
+        if(trigger != null)
+            trigger.SetActive(false);
     }
 
 }
