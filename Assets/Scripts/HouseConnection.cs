@@ -19,16 +19,24 @@ public class HouseConnection : MonoBehaviour
     private void Awake()
     {
         house1.OnChargeRequested += TryToActivate;
+        house1.OnCharged += Activate;
+        house1.OnHidden += StopActivation;
         house1.OnDeactivated += Deactivate;
         house2.OnChargeRequested += TryToActivate;
+        house2.OnCharged += Activate;
+        house2.OnHidden += StopActivation;
         house2.OnDeactivated += Deactivate;
     }
 
     private void OnDestroy()
     {
         house1.OnChargeRequested -= TryToActivate;
+        house1.OnCharged -= Activate;
+        house1.OnHidden -= StopActivation;
         house1.OnDeactivated -= Deactivate;
         house2.OnChargeRequested -= TryToActivate;
+        house2.OnCharged -= Activate;
+        house2.OnHidden -= StopActivation;
         house2.OnDeactivated -= Deactivate;
     }
 
@@ -38,8 +46,7 @@ public class HouseConnection : MonoBehaviour
         {
             if(currentActivationTimer > 0)
             {
-                sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b,
-                    sprite.color.a + spriteTransparencyDelta);
+                SetTransparency(sprite.color.a + spriteTransparencyDelta);
                 currentActivationTimer -= Time.fixedDeltaTime;
             } 
             else
@@ -47,7 +54,7 @@ public class HouseConnection : MonoBehaviour
                 house1.Charge();
                 house2.Charge();
                 activationStarted = false;
-                sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 1f);
+                SetTransparency(1f);
             }
         }
     }
@@ -55,20 +62,41 @@ public class HouseConnection : MonoBehaviour
     private void TryToActivate()
     {
         if (house1.isActive || house2.isActive)
-            Activate();
+            InitializeActivation();
     }
     
-    private void Activate()
+    private void InitializeActivation()
     {
         spriteTransparencyDelta = 1f * Time.fixedDeltaTime / activationTime;
         currentActivationTimer = activationTime;
         activationStarted = true;
+    }
+    
+    private void StopActivation()
+    {
+        if (!activationStarted) return;
+        currentActivationTimer = 0;
+        activationStarted = false;
+        SetTransparency(0f);
+    }
+
+    private void Activate()
+    {
+        if (!(house1.isCharged && house2.isCharged)) return;
+        activationStarted = false;
+        currentActivationTimer = 0f;
+        SetTransparency(1f);
     }
 
     private void Deactivate()
     {
         activationStarted = false;
         currentActivationTimer = 0f;
-        sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 0f);
+        SetTransparency(0f);
+    }
+
+    private void SetTransparency(float a)
+    {
+        sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, a);
     }
 }

@@ -21,6 +21,8 @@ public class House : MonoBehaviour
     private float chanceOfBeingSpotted;
     
     public event Action OnChargeRequested = delegate { };
+    public event Action OnCharged = delegate { };
+    public event Action OnHidden = delegate { };
     public event Action OnDeactivated = delegate { };
 
     
@@ -69,6 +71,7 @@ public class House : MonoBehaviour
                 sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b,
                     hidden?0.5f:1f);
                 hidingStatusChangeStarted = false;
+                OnHidden.Invoke();
             }
         }
     }
@@ -87,17 +90,19 @@ public class House : MonoBehaviour
         {
             sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 1f);
             charged = true;
+            OnCharged.Invoke();
         }
     }
 
     private void Deactivate()
     {
-        OnDeactivated.Invoke();
         hidden = false;
         currentHideTimer = 0f;
         hidingStatusChangeStarted = false;
         sprite.color = new Color(sprite.color.r, sprite.color.b, sprite.color.b, 0f);
         charged = false;
+        OnDeactivated.Invoke();
     }
     public bool isActive => !hidden && charged;
+    public bool isCharged => charged;
 }
